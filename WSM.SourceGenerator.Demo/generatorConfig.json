@@ -10,5 +10,5 @@
   "PublicFieldFormat": "{txt}",
   "MakeWholeNamespace": true,
   "NullableSupport": true,
-  "MinGeneratorFile": false
+  "MinGeneratorFile": true
 }
