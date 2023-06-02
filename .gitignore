@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/WSM.SourceGenerator.Demo/obj
+/WSM.SourceGenerator.Demo/bin/Debug
+/WSM.SourceGenerator.Gen/bin/Debug/netstandard2.0
+/WSM.SourceGenerator.Gen/obj
+/WSM.SourceGenerator.Lib/bin/Debug/netstandard2.0
+/WSM.SourceGenerator.Lib/obj
+/.vs
