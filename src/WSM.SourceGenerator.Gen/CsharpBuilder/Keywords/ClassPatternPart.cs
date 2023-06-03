@@ -7,17 +7,16 @@ namespace WSM.SourceGenerator.Gen.CsharpBuilder.Keywords
 {
     public class ClassPatternPart : ICSBuilderPart
     {
-        private readonly ICSBuilder children;
-
-        public ClassPatternPart(ICSBuilder children, string name, ClassTypeEnum type = ClassTypeEnum.Normal, ProtectionTypeEnum protectionType = ProtectionTypeEnum.Public, string? inherits = null)
+        public ClassPatternPart(ICSBuilder body, string name, ClassTypeEnum type = ClassTypeEnum.Normal, ProtectionTypeEnum protectionType = ProtectionTypeEnum.Public, string? inherits = null)
         {
-            this.children = children;
+            Body = body;
             Name = name;
             Type = type;
             ProtectionType = protectionType;
             Inherits = inherits;
         }
 
+        public ICSBuilder Body { get; }
         public string Name { get; }
         public ClassTypeEnum Type { get; }
         public ProtectionTypeEnum ProtectionType { get; }
@@ -32,7 +31,7 @@ namespace WSM.SourceGenerator.Gen.CsharpBuilder.Keywords
             if (!string.IsNullOrEmpty(Inherits))
                 builder.AppendLine($" : {Inherits}");
             builder.AppendLine("{");
-            builder.AppendLine(children.Build().ToString());
+            builder.AppendLine(Body.Build().ToString());
             builder.AppendLine("}");
             return builder;
         }
