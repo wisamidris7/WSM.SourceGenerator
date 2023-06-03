@@ -13,3 +13,5 @@
 /samples/WSM.SourceGenerator.Demo.WebApi/bin
 /samples/WSM.SourceGenerator.Demo.SharedModels/obj
 /samples/WSM.SourceGenerator.Demo.SharedModels/bin
+/samples/WSM.SourceGenerator.Demo.Api/obj
+/samples/WSM.SourceGenerator.Demo.Api/bin
