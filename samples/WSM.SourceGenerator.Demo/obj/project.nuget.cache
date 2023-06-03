@@ -1,0 +1,24 @@
+{
+  "version": 2,
+  "dgSpecHash": "nGhy4hgvVOHVVpw4y3wmn6STlohskDqz2yVeQfrpG+Gn0s2GPouBO67rDMvUacqVg5/5b7D296ymhfAPK9OWRQ==",
+  "success": false,
+  "projectFilePath": "C:\\Users\\Administrator\\source\\repos\\WSM.SourceGenerator\\samples\\WSM.SourceGenerator.Demo\\WSM.SourceGenerator.Demo.Client.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Administrator\\.nuget\\packages\\figgle\\0.5.1\\figgle.0.5.1.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.15\\microsoft.aspnetcore.app.ref.6.0.15.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.15\\microsoft.netcore.app.host.win-x64.6.0.15.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.15\\microsoft.netcore.app.ref.6.0.15.nupkg.sha512",
+    "C:\\Users\\Administrator\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.15\\microsoft.windowsdesktop.app.ref.6.0.15.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1104",
+      "level": "Error",
+      "message": "Unable to find project 'C:\\Users\\Administrator\\source\\repos\\WSM.SourceGenerator\\samples\\WSM.SourceGenerator.Lib\\WSM.SourceGenerator.Lib.csproj'. Check that the project reference is valid and that the project file exists.",
+      "libraryId": "C:\\Users\\Administrator\\source\\repos\\WSM.SourceGenerator\\samples\\WSM.SourceGenerator.Lib\\WSM.SourceGenerator.Lib.csproj",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
+}

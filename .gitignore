@@ -2,10 +2,14 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/WSM.SourceGenerator.Demo/obj
-/WSM.SourceGenerator.Demo/bin/Debug
-/WSM.SourceGenerator.Gen/bin/Debug/netstandard2.0
-/WSM.SourceGenerator.Gen/obj
-/WSM.SourceGenerator.Lib/bin/Debug/netstandard2.0
-/WSM.SourceGenerator.Lib/obj
 /.vs
+/src/WSM.SourceGenerator.Gen/bin
+/src/WSM.SourceGenerator.Gen/obj
+/src/WSM.SourceGenerator.Lib/bin
+/src/WSM.SourceGenerator.Lib/obj
+/samples/WSM.SourceGenerator.Demo.Client/obj
+/samples/WSM.SourceGenerator.Demo.Client/bin
+/samples/WSM.SourceGenerator.Demo.WebApi/obj
+/samples/WSM.SourceGenerator.Demo.WebApi/bin
+/samples/WSM.SourceGenerator.Demo.SharedModels/obj
+/samples/WSM.SourceGenerator.Demo.SharedModels/bin
