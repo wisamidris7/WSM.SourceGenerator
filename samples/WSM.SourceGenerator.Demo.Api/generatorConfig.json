@@ -1,0 +1,8 @@
+{
+  "Namespace": "WSM.SourceGenerator.Demo.Api.Controllers",
+  "Api": {
+    "ControllerName": "{name}Controller"
+    // {nameAll} For Name TestService 
+    // {name} For Test Word
+  }
+}

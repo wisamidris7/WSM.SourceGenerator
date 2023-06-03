@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSM.SourceGenerator.Demo.We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSM.SourceGenerator.Demo.Client", "samples\WSM.SourceGenerator.Demo.Client\WSM.SourceGenerator.Demo.Client.csproj", "{9E7651AB-947F-4420-A2E7-FC9AB078F91B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WSM.SourceGenerator.Demo.Api", "samples\WSM.SourceGenerator.Demo.Api\WSM.SourceGenerator.Demo.Api.csproj", "{CBC00723-0C17-4F7C-BFBC-F335D2EEDF54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{9E7651AB-947F-4420-A2E7-FC9AB078F91B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E7651AB-947F-4420-A2E7-FC9AB078F91B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E7651AB-947F-4420-A2E7-FC9AB078F91B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBC00723-0C17-4F7C-BFBC-F335D2EEDF54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBC00723-0C17-4F7C-BFBC-F335D2EEDF54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBC00723-0C17-4F7C-BFBC-F335D2EEDF54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBC00723-0C17-4F7C-BFBC-F335D2EEDF54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{A1AC1895-B065-4E35-9572-BE2F50E9FB5F} = {26368B50-7BEC-4DC7-B2C6-0C7AC49E2DB0}
 		{5F57BD2C-05D4-4ABF-BB81-B322E65E5375} = {26368B50-7BEC-4DC7-B2C6-0C7AC49E2DB0}
 		{9E7651AB-947F-4420-A2E7-FC9AB078F91B} = {26368B50-7BEC-4DC7-B2C6-0C7AC49E2DB0}
+		{CBC00723-0C17-4F7C-BFBC-F335D2EEDF54} = {26368B50-7BEC-4DC7-B2C6-0C7AC49E2DB0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3F1FB747-6A32-45B6-AC66-11661E61712B}
