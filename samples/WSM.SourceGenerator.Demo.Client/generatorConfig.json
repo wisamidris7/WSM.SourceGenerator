@@ -1,8 +1,8 @@
 {
+  "Namespace": "WSM.Demo.Models.Dto",
   "Class": {
     "GenerateDtoAttribute": "GenerateDto",
     "GenerateOptionalAttribute": "GenerateOptional",
-    "Namespace": "WSM.Demo.Models.Dto",
     "GenerateEmptyConstructor": true,
     "GenerateFieldsConstructor": true,
     "MakePrivateAndPublicFields": true,
@@ -12,11 +12,5 @@
     "MakeWholeNamespace": true,
     "NullableSupport": true,
     "OneGeneratorFile": false
-  },
-  "Client": {
-    "MethodFormat": "{methodname}_Invoke",
-    "ServiceFormat": "{controllerName}Client",
-    "InterfaceFormat": "I{controllerName}Client",
-    "ControllersPath": "..\\WSM.SourceGenerator.Demo.WebApi\\Controllers\\"
   }
 }
