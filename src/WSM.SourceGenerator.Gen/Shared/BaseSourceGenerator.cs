@@ -13,7 +13,8 @@ using WSM.SourceGenerator.Gen.Shared.Provider;
 
 namespace WSM.SourceGenerator.Gen.Shared
 {
-    public abstract class BaseSourceGenerator
+    [Generator]
+    public abstract class BaseSourceGenerator : ISourceGenerator
     {
         public virtual void Build()
         {
@@ -100,6 +101,14 @@ namespace WSM.SourceGenerator.Gen.Shared
                 propType = $"{propType}?";
 
             return propType;
+        }
+        public void AddSource(GeneratorExecutionContext context, string fileName ,string text)
+        {
+            context.AddSource(fileName, SourceText.From(text, Encoding.UTF32));
+        }
+        public void AddSource(GeneratorExecutionContext context, string fileName, StringBuilder builder)
+        {
+            AddSource(context, fileName, builder.ToString());
         }
         public abstract void Initialize(GeneratorInitializationContext context);
     }

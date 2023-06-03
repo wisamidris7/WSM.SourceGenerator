@@ -15,77 +15,77 @@ using WSM.SourceGenerator.Gen.Config;
 using WSM.SourceGenerator.Gen.CsharpBuilder;
 using WSM.SourceGenerator.Gen.CsharpBuilder.Keywords;
 using WSM.SourceGenerator.Gen.Shared;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WSM.SourceGenerator.Gen
 {
-    [Generator]
-    public class ClassDtoGenerator : BaseSourceGenerator, ISourceGenerator
+    public class ClassDtoGenerator : BaseSourceGenerator
     {
         public override void Execute(GeneratorExecutionContext context)
         {
             base.Execute(context);
-            // begin creating the source we'll inject into the users compilation
-            var syntaxTrees = context.Compilation.SyntaxTrees.ToList();
-
-            var classes = new CSBuilder();
-            classes.args ??= new();
-            foreach (var syntax in syntaxTrees)
+            if (Config.Class != null)
             {
-                var node = syntax.GetRoot();
-                var nodes = node.DescendantNodes().Where(item => item.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.ClassDeclaration));
-                if (!nodes.Any(e => MatchAttribute(e, Config.Class.GenerateDtoAttribute)))
-                    continue;
-                var fileName = Path.GetFileName(syntax.FilePath).Replace(".cs", ".g.cs");
-                classes.args.Add(fileName);
-                MultipleInOnePatternPart multiple = default;
-                foreach (var item in nodes)
+                var syntaxTrees = context.Compilation.SyntaxTrees.ToList();
+                var classes = new CSBuilder();
+                classes.args ??= new();
+                foreach (var syntax in syntaxTrees)
                 {
-                    ClassDeclarationSyntax root = (ClassDeclarationSyntax)item;
-                    if (!MatchAttribute(item, Config.Class.GenerateDtoAttribute))
+                    var node = syntax.GetRoot();
+                    var nodes = node.DescendantNodes().Where(item => item.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.ClassDeclaration));
+                    if (!nodes.Any(e => MatchAttribute(e, Config.Class.GenerateDtoAttribute)))
                         continue;
-                    var props = GetPropertiesList(root, context.Compilation);
-                    var className = $"{root.Identifier.ValueText}Dto";
-                    var classBody = new CSBuilder();
-                    AddConstructors(classBody, props, className);
-                    AddFields(classBody, props, className);
-
-                    var classPart = new ClassPatternPart(classBody, className, ClassTypeEnum.Partial);
-
-                    if (nodes.Count() == 1)
+                    var fileName = Path.GetFileName(syntax.FilePath).Replace(".cs", ".g.cs");
+                    classes.args.Add(fileName);
+                    MultipleInOnePatternPart multiple = default;
+                    foreach (var item in nodes)
                     {
-                        classes.AddPattern(classPart);
+                        ClassDeclarationSyntax root = (ClassDeclarationSyntax)item;
+                        if (!MatchAttribute(item, Config.Class.GenerateDtoAttribute))
+                            continue;
+                        var props = GetPropertiesList(root, context.Compilation);
+                        var className = $"{root.Identifier.ValueText}Dto";
+                        var classBody = new CSBuilder();
+                        AddConstructors(classBody, props, className);
+                        AddFields(classBody, props, className);
+
+                        var classPart = new ClassPatternPart(classBody, className, ClassTypeEnum.Partial);
+
+                        if (nodes.Count() == 1)
+                        {
+                            classes.AddPattern(classPart);
+                        }
+                        else if (nodes.Count() > 1)
+                        {
+                            multiple ??= new(new CSBuilder());
+                            multiple.Body.Add(classPart);
+                        }
                     }
-                    else if (nodes.Count() > 1)
+
+                    if (multiple != null)
                     {
-                        multiple ??= new(new CSBuilder());
-                        multiple.Body.Add(classPart);
+                        classes.AddPattern(multiple);
                     }
                 }
+                var namespacePart = new NamespacePatternPart(Config.Namespace);
+                if (Config.Class.OneGeneratorFile)
+                {
+                    classes.Insert(0, new DisableWarningsPatternPart());
+                    classes.Insert(1, namespacePart);
 
-                if (multiple != null)
-                {
-                    classes.AddPattern(multiple);
+                    AddSource(context, (Config.Class.OneGeneratorFileName ?? "Generator") + ".g.cs", classes.Build());
                 }
-            }
-            var namespacePart = new NamespacePatternPart(Config.Class.Namespace);
-            if (Config.Class.OneGeneratorFile)
-            {
-                classes.Insert(0, new DisableWarningsPatternPart());
-                classes.Insert(1, namespacePart);
-                context.AddSource((Config.Class.OneGeneratorFileName ?? "Generator") + ".g.cs", SourceText.From(classes.Build().ToString(), Encoding.UTF8));
-            }
-            else
-            {
-                for (int i = 0; i < classes.Count - 1; i++)
+                else
                 {
-                    var item = classes[i];
-                    ICSBuilder fileBuilder = new CSBuilder();
-                    fileBuilder.AddPattern(new DisableWarningsPatternPart());
-                    fileBuilder.AddPattern(namespacePart);
-                    fileBuilder.AddPattern(item);
-                    var text = fileBuilder.Build().ToString();
-                    context.AddSource(classes.args[i].ToString(), SourceText.From(text, Encoding.UTF8));
+                    for (int i = 0; i < classes.Count - 1; i++)
+                    {
+                        var item = classes[i];
+                        ICSBuilder fileBuilder = new CSBuilder();
+                        fileBuilder.AddPattern(new DisableWarningsPatternPart());
+                        fileBuilder.AddPattern(namespacePart);
+                        fileBuilder.AddPattern(item);
+
+                        AddSource(context, classes.args[i].ToString(), fileBuilder.Build());
+                    }
                 }
             }
         }
