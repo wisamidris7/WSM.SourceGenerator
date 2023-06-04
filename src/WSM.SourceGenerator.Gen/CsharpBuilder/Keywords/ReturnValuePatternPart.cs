@@ -25,7 +25,8 @@ namespace WSM.SourceGenerator.Gen.CsharpBuilder.Keywords
         {
             if (OneLine) return builder.Append($" => {Value}");
 
-            builder.Append($"return {Value}");
+            builder.Append($"return {Value};");
+            return builder;
         }
     }
 }

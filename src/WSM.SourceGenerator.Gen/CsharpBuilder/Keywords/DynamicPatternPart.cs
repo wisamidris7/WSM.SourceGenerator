@@ -19,9 +19,9 @@ namespace WSM.SourceGenerator.Gen.CsharpBuilder.Keywords
         {
             if (StringType)
                 builder.Append("\"");
-            builder.Append("\"");
+            builder.Append(Content);
             if (StringType)
-                builder.Append(Content);
+                builder.Append("\"");
             return builder;
         }
     }

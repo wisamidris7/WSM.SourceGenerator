@@ -1,7 +1,11 @@
 {
   "Namespace": "WSM.SourceGenerator.Demo.Api.Controllers",
   "Api": {
-    "ControllerName": "{name}Controller"
+    "ControllerName": "{name}Controller",
+    "StartAutoInjectionAttrubite": "Auto",
+    "AutoTransientAttrubite": "AutoTransient",
+    "AutoScopedAttrubite": "AutoScoped",
+    "AutoSingletonAttrubite": "AutoSingleton"
     // {nameAll} For Name TestService 
     // {name} For Test Word
   }

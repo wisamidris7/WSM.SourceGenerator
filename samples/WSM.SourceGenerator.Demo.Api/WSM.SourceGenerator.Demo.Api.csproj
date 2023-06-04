@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
 		<TargetFramework>net7.0</TargetFramework>
 	</PropertyGroup>
 
@@ -11,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\WSM.SourceGenerator.Gen\WSM.SourceGenerator.Gen.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />

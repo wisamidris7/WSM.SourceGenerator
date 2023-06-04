@@ -13,6 +13,11 @@ namespace WSM.SourceGenerator.Gen.Config
     public class GenerationConfigApiClient
     {
         public string? ControllerName { get; set; } = "{name}Controller";
+        public string? ServiceAttrubite { get; set; } = "ControllerService";
+        public string? StartAutoInjectionAttrubite { get; set; } = "Auto";
+        public string? AutoTransientAttrubite { get; set; } = "AutoTransient";
+        public string? AutoScopedAttrubite { get; set; } = "AutoScoped";
+        public string? AutoSingletonAttrubite { get; set; } = "AutoSingleton";
     }
     public class GenerationConfigClass
     {

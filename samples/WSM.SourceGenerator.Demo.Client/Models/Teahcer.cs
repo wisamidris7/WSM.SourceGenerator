@@ -1,4 +1,5 @@
 ﻿using System;
+using WSM.SourceGenerator.Lib.Attributes;
 
 namespace WSM.SourceGenerator;
 

@@ -13,7 +13,6 @@ using WSM.SourceGenerator.Gen.Shared.Provider;
 
 namespace WSM.SourceGenerator.Gen.Shared
 {
-    [Generator]
     public abstract class BaseSourceGenerator : ISourceGenerator
     {
         public virtual void Build()
@@ -100,6 +99,11 @@ namespace WSM.SourceGenerator.Gen.Shared
             else if (Config.Class.NullableSupport && propertyType.NullableAnnotation == NullableAnnotation.Annotated)
                 propType = $"{propType}?";
 
+            return propType;
+        }
+        public string GetPropertyType(ITypeSymbol property, bool optional = false)
+        {
+            var propType = property.ContainingNamespace.Name + "." + property.Name;
             return propType;
         }
         public void AddSource(GeneratorExecutionContext context, string fileName ,string text)

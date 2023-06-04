@@ -2,7 +2,7 @@
 
 namespace WSM.SourceGenerator.Lib.Attributes
 {
-    public class GenerateDtoAttribute : Attribute
+    public class AutoScopedAttribute : Attribute
     {
     }
 }

@@ -24,8 +24,8 @@ namespace WSM.SourceGenerator.Gen.CsharpBuilder.Keywords
         public StringBuilder Build(StringBuilder builder)
         {
             builder.Append(ProtectionType.ToString().ToLower());
-            builder.Append($" {ReturnValue}");
-            builder.Append($" {Name}(");
+            builder.Append($" {ReturnValue} ");
+            builder.Append($"{Name}(");
             if (Params != null)
             {
                 var @params = Params.Select(e => e.Build(new()).ToString());
