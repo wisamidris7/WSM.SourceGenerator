@@ -39,6 +39,9 @@ namespace WSM.SourceGenerator.Gen
                     var classSymbal = context.Compilation
                         .GetSemanticModel(serviceType.SyntaxTree)
                         .GetDeclaredSymbol(serviceType);
+                    var usingSerivce = classSymbal.ToString().Replace("." + classSymbal.Name, "");
+                    if (!@namespace.StartsWith(usingSerivce) && usingSerivce != "" && usingSerivce != null && usingSerivce != ".")
+                        controllerBuilder.AddPattern(new UsingPatternPart(usingSerivce));
 
                     controllerBuilder.AddPattern(new NamespacePatternPart(@namespace));
                     var controllerBody = new CSBuilder();
@@ -96,6 +99,7 @@ namespace WSM.SourceGenerator.Gen
                 }
             }
         }
+
         public override void Initialize(GeneratorInitializationContext context)
         {
             //Debugger.Launch();
