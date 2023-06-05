@@ -1,6 +1,6 @@
 You Have To Install WSM.SourceGenerator.Lib For Attrubites
 You Can Visit https://github.com/wisamidris7/WSM.SourceGenerator
-See samples For More Info
+See samples For More Info\n
 `
 Install-Package WSM.SourceGenerator.Lib
 `
