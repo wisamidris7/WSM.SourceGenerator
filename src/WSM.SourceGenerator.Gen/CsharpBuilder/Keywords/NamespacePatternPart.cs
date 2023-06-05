@@ -1,34 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WSM.SourceGenerator.Gen.CsharpBuilder.Keywords
+﻿namespace SourceGenerator.CsharpBuilder.Keywords;
+public class NamespacePatternPart : ICSBuilderPart
 {
-    public class NamespacePatternPart : ICSBuilderPart
+    public NamespacePatternPart(string name, ICSBuilder body = null)
     {
-        public NamespacePatternPart(string name, ICSBuilder body = null)
-        {
-            Name = name;
-            Body = body;
-        }
+        Name = name;
+        Body = body;
+    }
 
-        public string Name { get; }
-        public ICSBuilder Body { get; }
-        public StringBuilder Build(StringBuilder builder)
+    public string Name { get; }
+    public ICSBuilder Body { get; }
+    public StringBuilder Build(StringBuilder builder)
+    {
+        if (Body == null)
         {
-            if (Body == null)
-            {
-                builder.AppendLine($"namespace {Name};");
-                builder.AppendLine();
-            }
-            else
-            {
-                builder.AppendLine($"namespace {Name}");
-                builder.AppendLine("{");
-                builder.AppendLine(Body.Build().ToString());
-                builder.AppendLine("}");
-            }
-            return builder;
+            builder.AppendLine($"namespace {Name};");
+            builder.AppendLine();
         }
+        else
+        {
+            builder.AppendLine($"namespace {Name}");
+            builder.AppendLine("{");
+            builder.AppendLine(Body.Build().ToString());
+            builder.AppendLine("}");
+        }
+        return builder;
     }
 }

@@ -1,0 +1,15 @@
+﻿global using SourceGenerator;
+global using SourceGeneratorerators;
+global using SourceGenerator;
+global using SourceGenerator.CsharpBuilder;
+global using SourceGenerator.CsharpBuilder.Enums;
+global using SourceGenerator.CsharpBuilder.Keywords;
+global using SourceGenerator.Shared;
+global using SourceGenerator.Utilities;
+global using SourceGenerator.Config;
+global using Microsoft.CodeAnalysis;
+global using Microsoft.CodeAnalysis.CSharp.Syntax;
+global using Microsoft.CodeAnalysis.Text;
+global using System.Text;
+global using Microsoft.CodeAnalysis.CSharp;
+global using System.Collections.Immutable;

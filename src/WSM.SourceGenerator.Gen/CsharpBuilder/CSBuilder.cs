@@ -1,33 +1,24 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using WSM.SourceGenerator.Gen.CsharpBuilder.Keywords;
-
-namespace WSM.SourceGenerator.Gen.CsharpBuilder
+﻿namespace SourceGenerator.CsharpBuilder;
+public class CSBuilder : List<ICSBuilderPart>, ICSBuilder
 {
-    public class CSBuilder : List<ICSBuilderPart>, ICSBuilder
+    public List<object> args;
+    public ICSBuilder AddPattern(ICSBuilderPart part, bool conditional = true)
     {
-        public List<object> args;
-        public ICSBuilder AddPattern(ICSBuilderPart part, bool conditional = true)
+        if (conditional)
+            Add(part);
+        return this;
+    }
+    public static StringBuilder Build(List<ICSBuilderPart> patterns)
+    {
+        var builder = new StringBuilder();
+        foreach (var item in patterns)
         {
-            if (conditional)
-                Add(part);
-            return this;
+            item.Build(builder);
         }
-        public static StringBuilder Build(List<ICSBuilderPart> patterns)
-        {
-            var builder = new StringBuilder();
-            foreach (var item in patterns)
-            {
-                item.Build(builder);
-            }
-            return builder;
-        }
-        public StringBuilder Build()
-        {
-            return Build(this);
-        }
+        return builder;
+    }
+    public StringBuilder Build()
+    {
+        return Build(this);
     }
 }

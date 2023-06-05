@@ -1,28 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WSM.SourceGenerator.Gen.CsharpBuilder.Keywords
+﻿namespace SourceGenerator.CsharpBuilder.Keywords;
+public class DynamicPatternPart : ICSBuilderPart
 {
-    public class DynamicPatternPart : ICSBuilderPart
+    public string Content { get; set; }
+    public bool StringType { get; }
+
+    public DynamicPatternPart(string content, bool stringType = false)
     {
-        public string Content { get; set; }
-        public bool StringType { get; }
+        Content = content;
+        StringType = stringType;
+    }
 
-        public DynamicPatternPart(string content, bool stringType = false)
-        {
-            Content = content;
-            StringType = stringType;
-        }
-
-        public StringBuilder Build(StringBuilder builder)
-        {
-            if (StringType)
-                builder.Append("\"");
-            builder.Append(Content);
-            if (StringType)
-                builder.Append("\"");
-            return builder;
-        }
+    public StringBuilder Build(StringBuilder builder)
+    {
+        if (StringType)
+            builder.Append("\"");
+        builder.Append(Content);
+        if (StringType)
+            builder.Append("\"");
+        return builder;
     }
 }

@@ -1,12 +1,9 @@
 {
   "Namespace": "WSM.SourceGenerator.Demo.Api.Controllers",
-  "Api": {
-    "ControllerName": "{name}Controller",
-    "StartAutoInjectionAttrubite": "Auto",
-    "AutoTransientAttrubite": "AutoTransient",
-    "AutoScopedAttrubite": "AutoScoped",
-    "AutoSingletonAttrubite": "AutoSingleton"
-    // {nameAll} For Name TestService 
-    // {name} For Test Word
-  }
+  "Sources": [
+    "./" // To Scan All Assemblies In This Path
+    // Also If You Debugging You Have To Make This 👇
+    // "C://{WhereCloneThis}/WSM.SourceGenerator/samples/{Project}"
+  ],
+  "Api": {}
 }
