@@ -1,5 +1,4 @@
 You Have To Install WSM.SourceGenerator.Lib For Attrubites
-You Can Visit https://github.com/wisamidris7/WSM.SourceGenerator
 See samples For More Info
 
 # For Package Manager
@@ -34,5 +33,4 @@ public class Employee
 
 
 And I Will Generate EmployeeDto Try It With Your Self
-If You Find Problems You Can Visit https://github.com/wisamidris7/WSM.SourceGenerator
-And Make Issue And I Will Fix It
+If You Find Problems You Can Make Issue And I Will Fix It
