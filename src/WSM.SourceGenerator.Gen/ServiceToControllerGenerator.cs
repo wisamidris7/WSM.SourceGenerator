@@ -20,29 +20,44 @@ namespace WSM.SourceGenerator.Gen
             base.Execute(context);
             if (Config.Api != null && Config.Namespace != null)
             {
-                var classes = context.Compilation.SyntaxTrees
+                var classes = ManualLoad(Config.Sources)
                     .SelectMany(e => e.GetRoot().DescendantNodes())
-                    .Where(e => e.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.ClassDeclaration))
-                    .Where(e => MatchAttribute(e, Config.Api.ServiceAttrubite));
+                    .Where(e => e.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.ClassDeclaration) || e.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.InterfaceDeclaration))
+                    .Where(e => MatchAttribute(e, Config.Api.ServiceAttribute));
                 foreach (var item in classes)
                 {
-                    var serviceType = (ClassDeclarationSyntax)item;
-                    var serviceName = serviceType.Identifier.ValueText;
+                    var serviceType = item;
+                    var serviceName = string.Empty;
+                    if (serviceType is InterfaceDeclarationSyntax interfaceDeclarationSyntax)
+                        serviceName = interfaceDeclarationSyntax.Identifier.ValueText;
+                    else if (serviceType is ClassDeclarationSyntax classDeclarationSyntax)
+                        serviceName = classDeclarationSyntax.Identifier.ValueText;
+
+                    var isInterface = item is InterfaceDeclarationSyntax;
+                    var controllerNameOne = serviceName.Replace("Service", string.Empty);
+
+                    var isInterfaceNaming = controllerNameOne.StartsWith("I");
+                    controllerNameOne = isInterfaceNaming ? controllerNameOne.Substring(1, controllerNameOne.Length - 1) : controllerNameOne;
                     var controllerName = Config.Api.ControllerName
-                        .Replace("{name}", serviceName.Replace("Service", string.Empty))
+                        .Replace("{name}", controllerNameOne)
                         .Replace("{nameAll}", serviceName);
+
                     ICSBuilder controllerBuilder = new CSBuilder();
+                    var parent = (CompilationUnitSyntax)(item.Parent.Parent);
+                    var parentNamespace = (FileScopedNamespaceDeclarationSyntax)item.Parent;
+                    var usings = parent.Usings.ToArray();
+                    controllerBuilder.AddPattern(new ByNodePatternPart(usings));
                     var @namespace = Config.Namespace;
                     if (!Config.Namespace.EndsWith(".Controllers", StringComparison.OrdinalIgnoreCase))
                         @namespace = Config.Namespace + ".Controllers";
                     controllerBuilder.AddPattern(new UsingPatternPart("Microsoft.AspNetCore.Mvc"));
-                    var classSymbal = context.Compilation
-                        .GetSemanticModel(serviceType.SyntaxTree)
-                        .GetDeclaredSymbol(serviceType);
-                    var usingSerivce = classSymbal.ToString().Replace("." + classSymbal.Name, "");
+
+                    var usingSerivce = parentNamespace.Name.ToString();
                     if (!@namespace.StartsWith(usingSerivce) && usingSerivce != "" && usingSerivce != null && usingSerivce != ".")
                         controllerBuilder.AddPattern(new UsingPatternPart(usingSerivce));
-
+                    if (!string.IsNullOrEmpty(Config.Api.ControllerUsings))
+                        foreach (var @using in Config.Api.ControllerUsings.Split(','))
+                            controllerBuilder.AddPattern(new UsingPatternPart(@using));
                     controllerBuilder.AddPattern(new NamespacePatternPart(@namespace));
                     var controllerBody = new CSBuilder();
                     controllerBody.AddPattern(new FieldPatternPart("baseService", serviceName, protection: CsharpBuilder.Enums.ProtectionTypeEnum.Private));
@@ -73,10 +88,7 @@ namespace WSM.SourceGenerator.Gen
                         {
                             foreach (var param in @params.Parameters)
                             {
-                                var property = context.Compilation
-                                    .GetSemanticModel(param.SyntaxTree)
-                                    .GetDeclaredSymbol(param);
-                                paramsBuilder.AddPattern(new ParameterPatternPart(param.Identifier.ValueText, GetPropertyType(property.Type)));
+                                paramsBuilder.AddPattern(new ParameterPatternPart(param.Identifier.ValueText, GetPropertyType(param.Type)));
                                 paramsRequest.Add(param.Identifier.ValueText);
                             }
                         }
@@ -88,12 +100,11 @@ namespace WSM.SourceGenerator.Gen
                             })
                         }, param: paramsBuilder, returnValue: method.ReturnType.ToString()));
                     }
-                    controllerBuilder.AddPattern(new AttributesPatternPart("ApiController"));
-                    controllerBuilder.AddPattern(new AttributesPatternPart("Route", new CSBuilder()
-                        {
-                            new DynamicPatternPart("[controller]", true)
-                        }));
-                    controllerBuilder.AddPattern(new ClassPatternPart(controllerBody, controllerName, inherits: "ControllerBase"));
+                    if (!string.IsNullOrEmpty(Config.Api.ControllerAttributes))
+                        foreach (var attr in Config.Api.ControllerAttributes.Split(','))
+                            controllerBuilder.AddPattern(new DynamicPatternPart(attr));
+
+                    controllerBuilder.AddPattern(new ClassPatternPart(controllerBody, controllerName, inherits: Config.Api.ControllerInherent));
 
                     AddSource(context, controllerName + ".g.cs", controllerBuilder.Build());
                 }
@@ -102,7 +113,7 @@ namespace WSM.SourceGenerator.Gen
 
         public override void Initialize(GeneratorInitializationContext context)
         {
-            //Debugger.Launch();
+            Debugger.Launch();
         }
     }
 }

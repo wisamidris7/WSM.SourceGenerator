@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System;
@@ -15,6 +16,17 @@ namespace WSM.SourceGenerator.Gen.Shared
 {
     public abstract class BaseSourceGenerator : ISourceGenerator
     {
+        protected IEnumerable<SyntaxTree> ManualLoad(string[] rootDirs)
+        {
+            foreach (var rootDir in rootDirs)
+            {
+                foreach (var filepath in Directory.GetFiles(rootDir, "*.cs", SearchOption.AllDirectories))
+                {
+                    var file = File.ReadAllText(filepath);
+                    yield return CSharpSyntaxTree.ParseText(file);
+                }
+            }
+        }
         public virtual void Build()
         {
             var builder = CreateBuilder();
@@ -54,6 +66,10 @@ namespace WSM.SourceGenerator.Gen.Shared
             {
                 return propDeclaration.AttributeLists.SelectMany(e => e.Attributes).Any(e => string.Equals(e.Name.ToString().Replace("Attribute", ""), name.Replace("Attribute", ""), StringComparison.OrdinalIgnoreCase));
             }
+            if (node is InterfaceDeclarationSyntax interfaceDeclaration)
+            {
+                return interfaceDeclaration.AttributeLists.SelectMany(e => e.Attributes).Any(e => string.Equals(e.Name.ToString().Replace("Attribute", ""), name.Replace("Attribute", ""), StringComparison.OrdinalIgnoreCase));
+            }
             throw new UnauthorizedAccessException(node.SyntaxTree.FilePath);
             return false;
         }
@@ -61,15 +77,9 @@ namespace WSM.SourceGenerator.Gen.Shared
         {
             return attributes.Any(e => string.Equals(e.AttributeClass.ToString().Replace("Attribute", ""), name.Replace("Attribute", ""), StringComparison.OrdinalIgnoreCase));
         }
-        public List<IPropertySymbol> GetPropertiesList(ClassDeclarationSyntax classDeclaration, Compilation compilation)
+        public List<MemberDeclarationSyntax> GetPropertiesList(ClassDeclarationSyntax classDeclaration)
         {
-            return classDeclaration.Members.Select(e =>
-            {
-                var property = compilation
-                    .GetSemanticModel(e.SyntaxTree)
-                    .GetDeclaredSymbol(e);
-                return (IPropertySymbol)property;
-            }).ToList();
+            return classDeclaration.Members.ToList();
         }
         public string GetPrivateName(string prop)
         {
@@ -101,12 +111,17 @@ namespace WSM.SourceGenerator.Gen.Shared
 
             return propType;
         }
-        public string GetPropertyType(ITypeSymbol property, bool optional = false)
+        public string GetPropertyType(TypeSyntax typeSyntax, bool optional = false)
         {
-            var propType = property.ContainingNamespace.Name + "." + property.Name;
+            var propType = typeSyntax.ToString();
             return propType;
         }
-        public void AddSource(GeneratorExecutionContext context, string fileName ,string text)
+        public string GetPropertyType(ITypeSymbol property, bool optional = false)
+        {
+            var propType = property.Name;
+            return propType;
+        }
+        public void AddSource(GeneratorExecutionContext context, string fileName, string text)
         {
             context.AddSource(fileName, SourceText.From(text, Encoding.UTF32));
         }

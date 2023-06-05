@@ -11,6 +11,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Newtonsoft.Json.Linq;
 using WSM.SourceGenerator.Gen.Config;
 using WSM.SourceGenerator.Gen.CsharpBuilder;
 using WSM.SourceGenerator.Gen.CsharpBuilder.Keywords;
@@ -18,6 +19,7 @@ using WSM.SourceGenerator.Gen.Shared;
 
 namespace WSM.SourceGenerator.Gen
 {
+    [Generator]
     public class ClassDtoGenerator : BaseSourceGenerator
     {
         public override void Execute(GeneratorExecutionContext context)
@@ -25,7 +27,7 @@ namespace WSM.SourceGenerator.Gen
             base.Execute(context);
             if (Config.Class != null)
             {
-                var syntaxTrees = context.Compilation.SyntaxTrees.ToList();
+                var syntaxTrees = ManualLoad(Config.Sources);
                 var classes = new CSBuilder();
                 classes.args ??= new();
                 foreach (var syntax in syntaxTrees)
@@ -34,36 +36,25 @@ namespace WSM.SourceGenerator.Gen
                     var nodes = node.DescendantNodes().Where(item => item.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.ClassDeclaration));
                     if (!nodes.Any(e => MatchAttribute(e, Config.Class.GenerateDtoAttribute)))
                         continue;
-                    var fileName = Path.GetFileName(syntax.FilePath).Replace(".cs", ".g.cs");
-                    classes.args.Add(fileName);
-                    MultipleInOnePatternPart multiple = default;
                     foreach (var item in nodes)
                     {
                         ClassDeclarationSyntax root = (ClassDeclarationSyntax)item;
                         if (!MatchAttribute(item, Config.Class.GenerateDtoAttribute))
                             continue;
-                        var props = GetPropertiesList(root, context.Compilation);
+                        var props = GetPropertiesList(root)
+                            .Cast<PropertyDeclarationSyntax>()
+                            .Where(e => !MatchAttribute(e, Config.Class.IgnoreDtoAttribute))
+                            .ToList();
                         var className = $"{root.Identifier.ValueText}Dto";
+                        var fileName = root.Identifier.ValueText + ".g.cs";
+                        classes.args.Add(fileName);
                         var classBody = new CSBuilder();
                         AddConstructors(classBody, props, className);
                         AddFields(classBody, props, className);
 
                         var classPart = new ClassPatternPart(classBody, className, ClassTypeEnum.Partial);
 
-                        if (nodes.Count() == 1)
-                        {
-                            classes.AddPattern(classPart);
-                        }
-                        else if (nodes.Count() > 1)
-                        {
-                            multiple ??= new(new CSBuilder());
-                            multiple.Body.Add(classPart);
-                        }
-                    }
-
-                    if (multiple != null)
-                    {
-                        classes.AddPattern(multiple);
+                        classes.AddPattern(classPart);
                     }
                 }
                 var namespacePart = new NamespacePatternPart(Config.Namespace);
@@ -76,27 +67,31 @@ namespace WSM.SourceGenerator.Gen
                 }
                 else
                 {
-                    for (int i = 0; i < classes.Count - 1; i++)
+                    var i = 0;
+                    // This can't be for() cause Count = 1; And When (1 is Count) - 1 = 0
+                    // So He Will Not In for()
+                    // foreach() will make this work
+                    foreach (var item in classes)
                     {
-                        var item = classes[i];
                         ICSBuilder fileBuilder = new CSBuilder();
                         fileBuilder.AddPattern(new DisableWarningsPatternPart());
                         fileBuilder.AddPattern(namespacePart);
                         fileBuilder.AddPattern(item);
 
                         AddSource(context, classes.args[i].ToString(), fileBuilder.Build());
+                        i++;
                     }
                 }
             }
         }
 
-        private void AddFields(ICSBuilder classBody, List<IPropertySymbol> props, string className)
+        private void AddFields(ICSBuilder classBody, List<PropertyDeclarationSyntax> props, string className)
         {
             foreach (var item in props)
             {
-                var type = GetPropertyType(item);
-                var privateName = GetPrivateName(item.Name);
-                var propName = GetPropertyName(item.Name);
+                var type = GetPropertyType(item.Type);
+                var privateName = GetPrivateName(item.Identifier.ValueText);
+                var propName = GetPropertyName(item.Identifier.ValueText);
                 if (Config.Class.MakePrivateAndPublicFields)
                 {
                     classBody.AddPattern(new FieldPatternPart(privateName, type, protection: CsharpBuilder.Enums.ProtectionTypeEnum.Private));
@@ -108,7 +103,7 @@ namespace WSM.SourceGenerator.Gen
                 }
             }
         }
-        public void AddConstructors(ICSBuilder classBody, List<IPropertySymbol> properties, string className)
+        public void AddConstructors(ICSBuilder classBody, List<PropertyDeclarationSyntax> properties, string className)
         {
             if (Config.Class.GenerateEmptyConstructor)
             {
@@ -119,20 +114,20 @@ namespace WSM.SourceGenerator.Gen
                 ICSBuilder setters = new CSBuilder();
                 ICSBuilder @params = new CSBuilder();
                 var propsAndIsOptional = properties
-                    .Select(r => new { obj = r, optional = MatchAttribute(r.GetAttributes(), Config.Class.GenerateOptionalAttribute) })
+                    .Select(r => new { obj = r, optional = MatchAttribute(r, Config.Class.GenerateOptionalAttribute) })
                     .OrderBy(e => e.optional ? 1 : 0);
 
                 foreach (var prop in propsAndIsOptional)
                 {
-                    setters.AddPattern(new IfPatternPart($"{GetFieldName(prop.obj.Name)} is not null",
+                    setters.AddPattern(new IfPatternPart($"{GetFieldName(prop.obj.Identifier.ValueText)} is not null",
                         new CSBuilder()
                         {
-                            new SetValuePatternPart(GetPrivateName(prop.obj.Name), GetFieldName(prop.obj.Name))
+                            new SetValuePatternPart(GetPrivateName(prop.obj.Identifier.ValueText), GetFieldName(prop.obj.Identifier.ValueText))
                         }),
                         prop.optional);
 
-                    setters.AddPattern(new SetValuePatternPart(GetPrivateName(prop.obj.Name), GetFieldName(prop.obj.Name)), !prop.optional);
-                    @params.AddPattern(new ParameterPatternPart(GetFieldName(prop.obj.Name), GetPropertyType(prop.obj, prop.optional), prop.optional ? "null" : string.Empty));
+                    setters.AddPattern(new SetValuePatternPart(GetPrivateName(prop.obj.Identifier.ValueText), GetFieldName(prop.obj.Identifier.ValueText)), !prop.optional);
+                    @params.AddPattern(new ParameterPatternPart(GetFieldName(prop.obj.Identifier.ValueText), GetPropertyType(prop.obj.Type, prop.optional), prop.optional ? "null" : string.Empty));
                 }
                 classBody.AddPattern(new ConstructorPatternPart(className, @params, setters));
             }
@@ -140,12 +135,7 @@ namespace WSM.SourceGenerator.Gen
 
         public override void Initialize(GeneratorInitializationContext context)
         {
-#if DEBUG
-            //if (!Debugger.IsAttached)
-            //{
-            //    Debugger.Launch();
-            //}
-#endif
+            //Debugger.Launch();
         }
     }
 }

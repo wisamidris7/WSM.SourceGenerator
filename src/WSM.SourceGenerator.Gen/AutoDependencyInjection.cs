@@ -24,11 +24,11 @@ namespace WSM.SourceGenerator.Gen
             var classesNeedAuto = context.Compilation.SyntaxTrees
                     .SelectMany(e => e.GetRoot().DescendantNodes())
                     .Where(e => e.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.ClassDeclaration))
-                    .Where(e => ((ClassDeclarationSyntax)e).AttributeLists.SelectMany(e => e.Attributes).Any(e => e.Name.ToString().StartsWith(Config.Api.StartAutoInjectionAttrubite, StringComparison.OrdinalIgnoreCase)))
+                    .Where(e => ((ClassDeclarationSyntax)e).AttributeLists.SelectMany(e => e.Attributes).Any(e => e.Name.ToString().StartsWith(Config.Api.StartAutoInjectionAttribute, StringComparison.OrdinalIgnoreCase)))
                     .ToList();
-            var scopedClasses = classesNeedAuto.Where(e => ((ClassDeclarationSyntax)e).AttributeLists.SelectMany(e => e.Attributes).Any(e => e.Name.ToString().Equals(Config.Api.AutoScopedAttrubite, StringComparison.OrdinalIgnoreCase)));
-            var singletonClasses = classesNeedAuto.Where(e => ((ClassDeclarationSyntax)e).AttributeLists.SelectMany(e => e.Attributes).Any(e => e.Name.ToString().Equals(Config.Api.AutoSingletonAttrubite, StringComparison.OrdinalIgnoreCase)));
-            var transientClasses = classesNeedAuto.Where(e => ((ClassDeclarationSyntax)e).AttributeLists.SelectMany(e => e.Attributes).Any(e => e.Name.ToString().Equals(Config.Api.AutoTransientAttrubite, StringComparison.OrdinalIgnoreCase)));
+            var scopedClasses = classesNeedAuto.Where(e => ((ClassDeclarationSyntax)e).AttributeLists.SelectMany(e => e.Attributes).Any(e => e.Name.ToString().Equals(Config.Api.AutoScopedAttribute, StringComparison.OrdinalIgnoreCase)));
+            var singletonClasses = classesNeedAuto.Where(e => ((ClassDeclarationSyntax)e).AttributeLists.SelectMany(e => e.Attributes).Any(e => e.Name.ToString().Equals(Config.Api.AutoSingletonAttribute, StringComparison.OrdinalIgnoreCase)));
+            var transientClasses = classesNeedAuto.Where(e => ((ClassDeclarationSyntax)e).AttributeLists.SelectMany(e => e.Attributes).Any(e => e.Name.ToString().Equals(Config.Api.AutoTransientAttribute, StringComparison.OrdinalIgnoreCase)));
 
             ICSBuilder services = new CSBuilder();
 
