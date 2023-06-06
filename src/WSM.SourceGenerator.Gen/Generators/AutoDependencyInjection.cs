@@ -1,5 +1,4 @@
-﻿namespace SourceGeneratorerators;
-
+﻿namespace SourceGenerator;
 [Generator]
 public class AutoDependencyInjection : BaseSourceGenerator
 {
@@ -8,7 +7,7 @@ public class AutoDependencyInjection : BaseSourceGenerator
         base.Execute(context);
         if (Config.Injection == null) return;
 
-        var classesNeedAuto = ManualLoad(Config.Sources)
+        var classesNeedAuto = ManualLoad(context)
                 .SelectMany(e => e.GetRoot().DescendantNodes())
                 .Where(e => e.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.ClassDeclaration))
                 .Where(e => ((ClassDeclarationSyntax)e).AttributeLists.SelectMany(e => e.Attributes).Any(e => e.Name.ToString().StartsWith(Config.Injection.StartAutoInjectionAttribute, StringComparison.OrdinalIgnoreCase)))

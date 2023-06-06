@@ -1,6 +1,4 @@
 ﻿global using SourceGenerator;
-global using SourceGeneratorerators;
-global using SourceGenerator;
 global using SourceGenerator.CsharpBuilder;
 global using SourceGenerator.CsharpBuilder.Enums;
 global using SourceGenerator.CsharpBuilder.Keywords;

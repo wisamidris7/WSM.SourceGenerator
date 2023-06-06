@@ -15,7 +15,8 @@ public class FieldPatternPart : ICSBuilderPart
 
     public StringBuilder Build(StringBuilder builder)
     {
-        builder.Append(Protection.ToString().ToLower());
+        if (Protection != ProtectionTypeEnum.Empty)
+            builder.Append(Protection.ToString().ToLower());
         builder.Append($" {Type} {Name}");
         if (!string.IsNullOrEmpty(DefaultValue))
             builder.Append($" = {DefaultValue}");

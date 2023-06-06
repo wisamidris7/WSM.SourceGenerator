@@ -1,11 +1,18 @@
 ﻿using Microsoft.CodeAnalysis;
+using System.Diagnostics;
 
 namespace SourceGenerator;
 [Generator]
 public class ControllerToClientGenerator : BaseSourceGenerator
 {
-    // TODO: Do This
+    public override void Execute(GeneratorExecutionContext context)
+    {
+        base.Execute(context);
+
+        // Coming: Soon!
+    }
     public override void Initialize(GeneratorInitializationContext context)
     {
+        Debugger.Launch();
     }
 }
